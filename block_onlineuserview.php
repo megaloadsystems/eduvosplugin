@@ -20,35 +20,78 @@ class block_onlineuserview extends block_base {
 
         require_once(__DIR__ . '/classes/local/service.php');
 
-//        // --- 5 minute snapshot by role ---
-//        $summary = \block_onlineuserview\local\service::count_online_by_roles(300);
-//        $items = html_writer::start_tag('ul');
-//        $items .= html_writer::tag('li', get_string('window_300', 'block_onlineuserview'));
-//        $items .= html_writer::tag('li', get_string('col_all', 'block_onlineuserview') . ': ' . (int)$summary['all']);
-//        $items .= html_writer::tag('li', get_string('col_students', 'block_onlineuserview') . ': ' . (int)$summary['students']);
-//        $items .= html_writer::tag('li', get_string('col_staff', 'block_onlineuserview') . ': ' . (int)$summary['staff']);
-//        $items .= html_writer::end_tag('ul');
-//        $this->content->text .= $items;
-
-        // --- Quick 5/30/60 counts (All users) ---
-        $baseurl = new moodle_url('/blocks/onlineuserview/users.php', ['role' => 'all']);
+        // --- Quick counts with role filters (All users | Staff | Students): 3h, 6h, 12h, 24h ---
+        $baseurl = new moodle_url('/blocks/onlineuserview/users.php');
         $rows = [];
-        foreach ([5, 30, 60] as $m) {
-            $since = time() - ($m * 60);
-            $countsql = "
+
+        // Hours we want to display as rows.
+        $hours = [3, 6, 12, 24];
+
+        // Column labels (with graceful fallback if lang strings not present).
+        $strmgr = get_string_manager();
+        $label_all      = $strmgr->string_exists('allusers', 'block_onlineuserview') ? get_string('allusers', 'block_onlineuserview') : get_string('allusers');
+        $label_staff    = $strmgr->string_exists('staff', 'block_onlineuserview') ? get_string('staff', 'block_onlineuserview') : get_string('teachers');
+        $label_students = $strmgr->string_exists('students', 'block_onlineuserview') ? get_string('students', 'block_onlineuserview') : get_string('students');
+
+        foreach ($hours as $h) {
+            $since = time() - ($h * 3600); // convert hours to seconds
+
+            // Row label strings: h3, h6, h12, h24 (fallback to 'X hours').
+            $stringkey = 'h' . $h;
+            $label = $strmgr->string_exists($stringkey, 'block_onlineuserview')
+                ? get_string($stringkey, 'block_onlineuserview')
+                : ($h . ' ' . get_string('hours'));
+
+            // Build cells for All / Staff / Students
+            $cells = [];
+
+            // Helper to count users by role filter.
+            $count_all_sql = "
                 SELECT COUNT(DISTINCT u.id)
                   FROM {user} u
-                  JOIN {logstore_standard_log} l ON l.userid = u.id AND l.timecreated >= :since
-                 WHERE u.deleted=0 AND u.suspended=0 AND u.confirmed=1";
-            $cnt = (int)$DB->get_field_sql($countsql, ['since' => $since]);
+                  JOIN {logstore_standard_log} l
+                    ON l.userid = u.id
+                   AND l.timecreated >= :since
+                 WHERE u.deleted = 0
+                   AND u.suspended = 0
+                   AND u.confirmed = 1";
+            $cnt_all = (int)$DB->get_field_sql($count_all_sql, ['since' => $since]);
 
-            $label = ($m === 60) ? get_string('h1','block_onlineuserview')
-                   : (($m === 30) ? get_string('m30','block_onlineuserview')
-                                  : get_string('m5','block_onlineuserview'));
-            $url = new moodle_url($baseurl, ['window' => $m]);
+            // Staff = users with teacher/editingteacher role anywhere.
+            $count_staff_sql = $count_all_sql . "
+               AND EXISTS (
+                    SELECT 1
+                      FROM {role_assignments} ra
+                      JOIN {role} r ON r.id = ra.roleid
+                     WHERE ra.userid = u.id
+                       AND r.shortname IN ('teacher','editingteacher')
+                )";
+            $cnt_staff = (int)$DB->get_field_sql($count_staff_sql, ['since' => $since]);
+
+            // Students = users with student role anywhere.
+            $count_students_sql = $count_all_sql . "
+               AND EXISTS (
+                    SELECT 1
+                      FROM {role_assignments} ra
+                      JOIN {role} r ON r.id = ra.roleid
+                     WHERE ra.userid = u.id
+                       AND r.shortname = 'student'
+                )";
+            $cnt_students = (int)$DB->get_field_sql($count_students_sql, ['since' => $since]);
+
+            // users.php expects window in MINUTES like before.
+            $windowminutes = $h * 60;
+
+            $url_all      = new moodle_url($baseurl, ['window' => $windowminutes, 'role' => 'all']);
+            $url_staff    = new moodle_url($baseurl, ['window' => $windowminutes, 'role' => 'staff']);
+            $url_students = new moodle_url($baseurl, ['window' => $windowminutes, 'role' => 'students']);
+
+            $cells[] = html_writer::tag('td', html_writer::link($url_all,      $label_all      . ': ' . $cnt_all));
+            $cells[] = html_writer::tag('td', html_writer::link($url_staff,    $label_staff    . ': ' . $cnt_staff));
+            $cells[] = html_writer::tag('td', html_writer::link($url_students, $label_students . ': ' . $cnt_students));
+
             $rows[] = html_writer::tag('tr',
-                html_writer::tag('td', html_writer::link($url, $label)) .
-                html_writer::tag('td', $cnt)
+                html_writer::tag('td', $label) . implode('', $cells)
             );
         }
 
@@ -56,12 +99,15 @@ class block_onlineuserview extends block_base {
             html_writer::tag('thead',
                 html_writer::tag('tr',
                     html_writer::tag('th', get_string('period','block_onlineuserview')) .
-                    html_writer::tag('th', get_string('usersonline','block_onlineuserview'))
+                    html_writer::tag('th', $label_all) .
+                    html_writer::tag('th', $label_staff) .
+                    html_writer::tag('th', $label_students)
                 )
             ) .
             html_writer::tag('tbody', implode('', $rows)),
-            ['class'=>'generaltable', 'style'=>'margin-top:8px;']
+            ['class' => 'generaltable', 'style' => 'margin-top:8px;']
         );
+
         $this->content->text .= html_writer::tag('div',
             html_writer::tag('h5', get_string('onlinesummary','block_onlineuserview')) . $tablehtml
         );
@@ -78,7 +124,8 @@ class block_onlineuserview extends block_base {
         $heatlink = html_writer::link($heaturl, get_string('viewheatmap', 'block_onlineuserview'));
         $this->content->text .= html_writer::div($heatlink, '', ['style' => 'margin-top:6px;']);
 
-        $usersurl = new moodle_url('/blocks/onlineuserview/users.php', ['window'=>30,'role'=>'all']);
+        // Default "Users by email" link: set to 3h window, 'all' role.
+        $usersurl = new moodle_url('/blocks/onlineuserview/users.php', ['window' => 180, 'role' => 'all']);
         $userslink = html_writer::link($usersurl, get_string('usersbyemail','block_onlineuserview'));
         $this->content->text .= html_writer::div($userslink, '', ['style' => 'margin-top:6px;']);
 

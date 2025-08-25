@@ -26,6 +26,12 @@ $string['col_all'] = 'All';
 $string['col_students'] = 'Students';
 $string['col_staff'] = 'Staff';
 
+$string['h3']  = 'Last 3 hours';
+$string['h6']  = 'Last 6 hours';
+$string['h12'] = 'Last 12 hours';
+$string['h24'] = 'Last 24 hours';
+
+
 // lang/en/block_onlineuserview.php
 $string['heatmap_legend_low']  = 'Fewer logins';
 $string['heatmap_legend_mid']  = 'Typical';
