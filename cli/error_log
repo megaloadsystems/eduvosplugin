@@ -1,0 +1,30 @@
+[25-Aug-2025 14:48:37 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 13
+[25-Aug-2025 14:48:37 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 13 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
+[25-Aug-2025 14:49:21 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 13
+[25-Aug-2025 14:49:21 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 13 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
+[25-Aug-2025 14:50:12 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 18
+[25-Aug-2025 14:50:12 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 18 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
+[25-Aug-2025 14:50:38 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 18
+[25-Aug-2025 14:50:38 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 18 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
+[25-Aug-2025 14:52:23 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 22
+[25-Aug-2025 14:52:23 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 22 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
+[25-Aug-2025 14:55:31 America/New_York] PHP Warning:  require_once(/home/megaloa1/eduvos.megaload.co.za/enrol/lib.php): Failed to open stream: No such file or directory in /home/megaloa1/eduvos.megaload.co.za/blocks/onlineuserview/cli/seed_enrol_teachers.php on line 33
+[25-Aug-2025 14:55:31 America/New_York] Default exception handler: Exception - Failed opening required '[dirroot]/enrol/lib.php' (include_path='[dirroot]/lib/pear:.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') Debug: 
+Error code: generalexceptionmessage
+* line 33 of /blocks/onlineuserview/cli/seed_enrol_teachers.php: Error thrown
+
